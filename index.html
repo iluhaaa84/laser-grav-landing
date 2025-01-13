@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лазерная гравировка на металле</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Шапка -->
+<header>
+    <div class="container">
+        <h1>Лазерная гравировка на металле</h1>
+        <p>Создайте уникальные изделия с нашим высокоточным оборудованием!</p>
+        <a href="#order" class="btn">Заказать сейчас</a>
+    </div>
+</header>
+
+<!-- Описание услуги -->
+<section id="about">
+    <div class="container">
+        <h2>Почему выбирают нас?</h2>
+        <div class="features">
+            <div class="feature">
+                <h3>Высокая точность</h3>
+                <p>Хорошая детализация даже на мелких элементах.</p>
+            </div>
+            <div class="feature">
+                <h3>Быстрые сроки</h3>
+                <p>Выполнение заказов в кратчайшие сроки.</p>
+            </div>
+            <div class="feature">
+                <h3>Доступные цены</h3>
+                <p>Качественные услуги по конкурентным ценам.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Галерея работ -->
+<section id="gallery">
+    <div class="container">
+        <h2>Наши работы</h2>
+        <div class="slider">
+            <div class="slides">
+                <img src="image1.jpg" alt="Работа 1">
+                <img src="image2.jpg" alt="Работа 2">
+                <img src="image3.jpg" alt="Работа 3">
+            </div>
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+        </div>
+    </div>
+</section>
+
+<!-- Форма заказа -->
+<section id="order">
+    <div class="container">
+        <h2>Заказать гравировку</h2>
+        <form id="order-form">
+            <input type="text" name="name" placeholder="Ваше имя" required>
+            <input type="email" name="email" placeholder="Ваш телефон" required>
+            <textarea name="message" placeholder="Описание заказа" required></textarea>
+            <button type="submit" class="btn">Отправить заявку</button>
+        </form>
+    </div>
+</section>
+
+<!-- Футер -->
+<footer>
+    <div class="container">
+        <p>© 2019-2025 Фотончик. Все права защищены.</p>
+        <p>Телефон: +375 (29) 857-19-22 | Email: steblovsky.ilya@gmail.com</p>
+    </div>
+</footer>
+
+<script>
+    // Слайдер
+    let slideIndex = 0;
+    const slides = document.querySelector('.slides');
+    const totalSlides = document.querySelectorAll('.slides img').length;
+
+    function showSlide(index) {
+        if (index >= totalSlides) slideIndex = 0;
+        if (index < 0) slideIndex = totalSlides - 1;
+        slides.style.transform = `translateX(${-slideIndex * 100}%)`;
+    }
+
+    document.querySelector('.prev').addEventListener('click', () => {
+        slideIndex--;
+        showSlide(slideIndex);
+    });
+
+    document.querySelector('.next').addEventListener('click', () => {
+        slideIndex++;
+        showSlide(slideIndex);
+    });
+
+    // Автопереключение слайдов
+    setInterval(() => {
+        slideIndex++;
+        showSlide(slideIndex);
+    }, 5000);
+
+    // Обработка формы (Telegram)
+    const botToken = '7659303919:AAGMk4FOZjV6WUNl7hqaNtAG5LrhHBT4_XM'; // Замени на токен бота
+    const chatId = '6744893199';    // Замени на твой Chat ID
+
+    document.getElementById('order-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        // Формируем сообщение для Telegram
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const message = formData.get('message');
+        const text = `Новый заказ!\nИмя: ${name}\nEmail: ${email}\nСообщение: ${message}`;
+
+        // Отправляем сообщение в Telegram
+        fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: text
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+                    form.reset();
+                } else {
+                    console.error('Ошибка Telegram API:', data);
+                    alert('Ошибка при отправке. Пожалуйста, попробуйте ещё раз.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+    });
+</script>
+</body>
+</html>
